@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title> Example </title>
+<style>
+body { background-color: #4b9dbc; }
+</style>
+</head>
+<body>
+<ul class="sensor-values">
+</ul>
+<script>
+
+
+  var previous = null;
+  var current = null;
+  setInterval(function() {
+    
+    $("ul").empty();
+    $.getJSON( "data_sensor.json", function( data ) {
+      var items = [];
+      $.each( data, function( key, val ) {
+        items.push( "<li id='" + key + "'>" + key + " = " + val + "</li>" );
+      });
+
+    $("ul").html(items.join(""));
+    
+    });
+  },1000);
+</script>
+</body>
+</html>
