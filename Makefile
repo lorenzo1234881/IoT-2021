@@ -61,11 +61,13 @@ IPV6_PREFIX ?= fe80:2::/64
 # The Broker address, port and the default MQTT topic to subscribe.
 SERVER_ADDR = fe80::1
 SERVER_PORT = 1885
-MQTT_TOPIC = both_directions
+MQTT_PUB_TOPIC = localgateway_to_awsiot
+MQTT_SUB_TOPIC = awsiot_to_localgateway
 
 CFLAGS += -DSERVER_ADDR='"$(SERVER_ADDR)"'
 CFLAGS += -DSERVER_PORT=$(SERVER_PORT)
-CFLAGS += -DMQTT_TOPIC='"$(MQTT_TOPIC)"'
+CFLAGS += -DMQTT_PUB_TOPIC='"$(MQTT_PUB_TOPIC)"'
+CFLAGS += -DMQTT_SUB_TOPIC='"$(MQTT_SUB_TOPIC)"'
 
 ETHOS_BAUDRATE ?= 115200
 # executes $(RIOTTOOLS)/ethos/setup_network.sh that sets up a tap device,

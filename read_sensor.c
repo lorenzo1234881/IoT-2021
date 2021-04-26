@@ -8,19 +8,17 @@
 #include "periph/pwm.h"
 #include "analog_util.h"
 
-#define TEMPSENSORPIN 0
-#define REDSENSORPIN 1
-#define GREENSENSORPIN 3
-#define BLUESENSORPIN 4
-
-#define LEDPIN GPIO_PIN(PORT_A, 10)
-#define BUZZERPIN GPIO_PIN(PORT_B, 3)
+#define TEMPSENSORPIN 0  /* A0 PA0 */
+#define REDSENSORPIN 1   /* A1 PA1 */
+#define GREENSENSORPIN 3 /* A3 PB0 */
+#define BLUESENSORPIN 4  /* A4 PC1 */
 
 #define ADC_RES ADC_RES_12BIT
 
 char buzzer_thread_stack[THREAD_STACKSIZE_DEFAULT];
 
-int init_adc_lines(void)
+// init adc lines
+int init_sensors(void)
 {
 	const int analogpins[] = {REDSENSORPIN, GREENSENSORPIN, BLUESENSORPIN, TEMPSENSORPIN};
 	const int npins = sizeof(analogpins) / sizeof(int);
@@ -42,39 +40,6 @@ err:
 
 }
 
-void *poweron_buzzer(void* arg)
-{
-	(void) arg;
-
-	xtimer_ticks32_t  t = xtimer_now();
-	pwm_init(0, PWM_LEFT, 440, 65535);
-	pwm_set(0, 1, 32768);
-	xtimer_periodic_wakeup(&t, (2000LU * US_PER_MS));
-	pwm_poweroff(0);
-
-	// 	// thread_sleep();
-	// 	t = xtimer_now();
-	// 	xtimer_periodic_wakeup(&t, (500LU * US_PER_MS));
-
-	// 	pwm_poweron(0);
-	// 	t = xtimer_now();
-	// 	xtimer_periodic_wakeup(&t, (500LU * US_PER_MS));
-	// 	pwm_poweroff(0);
-	
-
-	return NULL;
-}
-
-void poweron_led(void)
-{
-	gpio_set(LEDPIN);
-}
-
-void poweroff_led(void)
-{
-	gpio_clear(LEDPIN);
-}
-
 int read_photores(int photorespin)
 {
 	int sample = 0;
@@ -88,7 +53,7 @@ int read_photores(int photorespin)
 	}
 
 	printf("ADC_LINE(%u): raw value: %i, lux: %i\n", photorespin, sample, lux);
-
+	
 	return lux;
 }
 

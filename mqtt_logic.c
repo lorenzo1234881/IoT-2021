@@ -1,4 +1,5 @@
 #include "mqtt_logic.h"
+#include "ctl_actuators.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -8,7 +9,9 @@
 #define EMCUTE_ID           ("gertrud")
 #endif
 #define EMCUTE_PRIO         (THREAD_PRIORITY_MAIN - 1)
+#define TOPIC_MAXLEN        (64U)
 
+static emcute_sub_t subscription;
 static char stack[THREAD_STACKSIZE_DEFAULT];
 
 static void *emcute_thread(void *arg)
@@ -43,8 +46,16 @@ int mqtt_init(emcute_topic_t* topic)
 
     printf("Successfully connected to gateway at [%s]:%i\n",
            SERVER_ADDR, (int)gw.port);
-    	
-	topic->name = MQTT_TOPIC;
+
+    unsigned flags_sub = EMCUTE_QOS_0;
+    subscription.cb = update_state;
+    subscription.topic.name = MQTT_SUB_TOPIC;
+    if (emcute_sub(&subscription, flags_sub) != EMCUTE_OK) {
+        printf("error: unable to subscribe to %s\n", MQTT_SUB_TOPIC);
+        return 1;
+    }
+
+	topic->name = MQTT_PUB_TOPIC;
 	
     /* get topic id */    
 	if (emcute_reg(topic) != EMCUTE_OK) {
@@ -66,8 +77,7 @@ int mqtt_pub(emcute_topic_t topic, char* msg_pub, size_t len_msg_pub)
         return 1;
     }
 
-    printf("Published %u bytes to topic '%s [%i]'\n",
-            len_msg_pub, topic.name, topic.id);
+    printf("Published %u bytes to topic '%s [%i]'\n", len_msg_pub, topic.name, topic.id);
 
     return 0;
 }
