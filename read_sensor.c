@@ -52,8 +52,10 @@ int read_photores(int photorespin)
 		printf("ADC_LINE(%u): selected resolution not applicable\n", photorespin);
 	}
 
+#if READ_SENSOR_DEBUG
 	printf("ADC_LINE(%u): raw value: %i, lux: %i\n", photorespin, sample, lux);
-	
+#endif
+
 	return lux;
 }
 
@@ -79,7 +81,9 @@ int read_tmp36(void)
 	int voltage = adc_util_map(sample, ADC_RES, 0, 5000);
 	float temperature = (voltage - 500) /10.0;
 
+#if READ_SENSOR_DEBUG
 	printf("tmp36: raw value: %d\n", sample);
+#endif
 
 	return temperature;
 }

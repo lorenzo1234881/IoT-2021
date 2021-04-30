@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define TX_INTERVAL (1000LU * US_PER_MS)
+#define TX_INTERVAL (5000LU * US_PER_MS)
 
 #define MSG_TEMPLATE "{\
 		\"plant_state\":%d,\

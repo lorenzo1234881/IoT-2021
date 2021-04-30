@@ -1,6 +1,12 @@
 #include "ctl_actuators.h"
+#include "jsmn/jsmn.h"
 
-#define LEDPIN GPIO_PIN(PORT_B, 5) /* 4 D3 */
+/* BUZZERPIN 3 D3 */
+/* LEDPIN 4 D4 */
+
+#define LEDPIN GPIO_PIN(PORT_B, 5)
+
+#define MAX_TOKENS 3
 
 int ctl_actuators_state;
 
@@ -47,36 +53,73 @@ int read_state(void)
     return ctl_actuators_state;
 }
 
+static int jsoneq(const char *json, jsmntok_t *tok, const char *s) {
+  if (tok->type == JSMN_STRING && (int)strlen(s) == tok->end - tok->start &&
+      strncmp(json + tok->start, s, tok->end - tok->start) == 0) {
+    return 0;
+  }
+  return -1;
+}
+
 void update_state(const emcute_topic_t *topic, void *data, size_t len)
 {
     char *in = (char *)data;
 
+#if CTL_ACTUATORS_DEBUG
     printf("### got publication for topic '%s' [%i] ###\n",
            topic->name, (int)topic->id);
     for (size_t i = 0; i < len; i++) {
         printf("%c", in[i]);
     }
     puts("");
+#endif
 
-    int update_state = atoi(in);
+    jsmn_parser p;
+    jsmntok_t t[MAX_TOKENS];
+    int update_state = 0;
+    int r;
+    int i;
+
+    jsmn_init(&p);
+    r = jsmn_parse(&p, in, len, t, MAX_TOKENS);
+    if (r < 0) {
+        printf("Failed to parse JSON: %d\n", r);
+    }
+
+    /* Assume the top-level element is an object */
+    if (r < 1 || t[0].type != JSMN_OBJECT) {
+        printf("Object expected\n");
+    }
+
+    for( i = 1; i < r; i++)
+        if (jsoneq(in, &t[i], "plant_status") == 0) {            
+            update_state = atoi(in + t[i+1].start);
+            i++;
+        }
+        else {
+            printf("Unexpected key: %.*s\n", t[i].end - t[i].start,
+            in + t[i].start);
+            return;
+        }
 
     if(update_state == ctl_actuators_state)
         return;
 
+#if CTL_ACTUATORS_DEBUG
+    printf("change state to %d\n", update_state);
+#endif
+
     switch (update_state)
     {
     case STATE_NORMAL:
-        printf("change state update to %d", update_state);
         poweroff_led();
         poweroff_buzzer();
         break;
     case STATE_ALLARMING:
-        printf("change state update to %d", update_state);
         poweron_led();
         poweroff_buzzer();
         break;
     case STATE_CRITICAL:
-        printf("change state update to %d", update_state);
         poweron_led();
         poweron_buzzer();
         break;

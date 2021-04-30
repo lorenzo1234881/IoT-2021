@@ -12,7 +12,7 @@
 #define TOPIC_MAXLEN        (64U)
 
 static emcute_sub_t subscription;
-static char stack[THREAD_STACKSIZE_DEFAULT];
+static char stack[THREAD_STACKSIZE_LARGE];
 
 static void *emcute_thread(void *arg)
 {
@@ -27,8 +27,10 @@ int mqtt_init(emcute_topic_t* topic)
     thread_create(stack, sizeof(stack), EMCUTE_PRIO, 0,
                   emcute_thread, NULL, "emcute");
 
+#if MQTT_LOGIC_DEBUG
     printf("Connecting to MQTT-SN broker %s port %d.\n",
            SERVER_ADDR, SERVER_PORT);
+#endif
 
     sock_udp_ep_t gw = { .family = AF_INET6, .port = SERVER_PORT };
 
@@ -44,8 +46,10 @@ int mqtt_init(emcute_topic_t* topic)
         return -1;
     }
 
+#if MQTT_LOGIC_DEBUG
     printf("Successfully connected to gateway at [%s]:%i\n",
            SERVER_ADDR, (int)gw.port);
+#endif
 
     unsigned flags_sub = EMCUTE_QOS_0;
     subscription.cb = update_state;
@@ -77,7 +81,9 @@ int mqtt_pub(emcute_topic_t topic, char* msg_pub, size_t len_msg_pub)
         return 1;
     }
 
+#if MQTT_LOGIC_DEBUG
     printf("Published %u bytes to topic '%s [%i]'\n", len_msg_pub, topic.name, topic.id);
+#endif
 
     return 0;
 }
