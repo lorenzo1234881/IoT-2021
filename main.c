@@ -38,7 +38,7 @@ int main(void)
 
 		int state = read_state();
 		read_rgb(&r, &g, &b);
-		temp = read_tmp36();
+		temp = read_temperature();
 
 		sprintf(bufmsg, MSG_TEMPLATE, state, r, g, b, temp);
 

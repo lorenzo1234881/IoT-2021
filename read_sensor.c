@@ -66,7 +66,7 @@ void read_rgb(int* r, int* g, int* b)
 	*b = read_photores(BLUESENSORPIN);
 }
 
-int read_tmp36(void)
+int read_temperature(void)
 {
 	int sample;
 
