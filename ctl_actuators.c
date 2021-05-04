@@ -8,36 +8,29 @@
 
 #define MAX_TOKENS 3
 
+#define POWERON_BUZZER() {\
+    pwm_poweron(0); \
+}
+
+#define POWEROFF_BUZZER() {\
+    pwm_poweroff(0);\
+}
+
+#define POWERON_LED() {\
+    gpio_set(LEDPIN); \
+}
+
+#define POWEROFF_LED() {\
+    gpio_clear(LEDPIN); \
+}
+
 int ctl_actuators_state;
-
-void poweron_buzzer(void)
-{	
-    pwm_poweron(0);
-	return;
-}
-
-void poweroff_buzzer(void)
-{	
-    pwm_poweroff(0);
-	return;
-}
-
-void poweron_led(void)
-{
-	gpio_set(LEDPIN);
-}
-
-void poweroff_led(void)
-{
-	gpio_clear(LEDPIN);
-}
-
 
 void init_actuators(void)
 {
     // init led pin
 	gpio_init(LEDPIN, GPIO_OUT);
-    poweroff_led();
+    POWEROFF_LED();
 
 	xtimer_ticks32_t  t = xtimer_now();
 	pwm_init(0, PWM_LEFT, 440, 65535);
@@ -112,16 +105,16 @@ void update_state(const emcute_topic_t *topic, void *data, size_t len)
     switch (update_state)
     {
     case STATE_NORMAL:
-        poweroff_led();
-        poweroff_buzzer();
+        POWEROFF_LED();
+        POWEROFF_BUZZER();
         break;
     case STATE_ALLARMING:
-        poweron_led();
-        poweroff_buzzer();
+        POWERON_LED();
+        POWEROFF_BUZZER();
         break;
     case STATE_CRITICAL:
-        poweron_led();
-        poweron_buzzer();
+        POWERON_LED();
+        POWERON_BUZZER();
         break;
     default:
         printf("format state non recognized\n");

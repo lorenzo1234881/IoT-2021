@@ -1,5 +1,5 @@
 # name of your application
-APPLICATION = tft_mqtts
+APPLICATION = iot_ia1
 
 # If no BOARD is found in the environment, use this default:
 BOARD ?= nucleo-f401re
@@ -14,7 +14,6 @@ FEATURES_REQUIRED += periph_adc
 FEATURES_REQUIRED += periph_pwm
 
 USEMODULE += analog_util
-USEMODULE += xtimer
 
 # Include packages that pull up and auto-init the link layer.
 # NOTE: 6LoWPAN will be included if IEEE802.15.4 devices are present
@@ -35,8 +34,7 @@ USEMODULE += gnrc_uhcpc
 
 USEMODULE += xtimer
 
-USEPKG += ucglib
-FEATURES_REQUIRED += periph_gpio periph_spi
+FEATURES_REQUIRED += periph_gpio
 
 # Allow for env-var-based override of the nodes name (EMCUTE_ID)
 ifneq (,$(EMCUTE_ID))

@@ -1,7 +1,6 @@
 #include "read_sensor.h"
 
 #include "xtimer.h"
-#include "thread.h"
 
 #include "periph/adc.h"
 #include "periph/gpio.h"
@@ -14,8 +13,6 @@
 #define BLUESENSORPIN 4  /* A4 PC1 */
 
 #define ADC_RES ADC_RES_12BIT
-
-char buzzer_thread_stack[THREAD_STACKSIZE_DEFAULT];
 
 // init adc lines
 int init_sensors(void)
