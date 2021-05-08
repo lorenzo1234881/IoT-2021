@@ -10,12 +10,13 @@
 #define TX_INTERVAL (5000LU * US_PER_MS)
 
 #define MSG_TEMPLATE "{\
-		\"plant_state\":%d,\
-		\"red\":%d,\
-		\"green\":%d,\
-		\"blue\":%d,\
-		\"temperature\":%d\
+		\"deviceId\":\"%s\",\
+		\"temperature\":%d,\
+		\"light\":%d,\
+		\"led\":%d,\
+		\"buzzer\":%d\
 		}"
+
 #define BUFMSG_MAXLEN 200
 
 int main(void)
@@ -29,18 +30,16 @@ int main(void)
 
 	xtimer_ticks32_t t = xtimer_now();
 
-	int r,g,b;
-	int temp;
-
 	while(1) {
 		
 		char bufmsg[BUFMSG_MAXLEN];
 
-		int state = read_state();
-		read_rgb(&r, &g, &b);
-		temp = read_temperature();
+		int lux = read_lux();
+		int temp = read_temperature();
+		int led = read_led();
+		int buzzer = read_buzzer();
 
-		sprintf(bufmsg, MSG_TEMPLATE, state, r, g, b, temp);
+		sprintf(bufmsg, MSG_TEMPLATE, DEVICE_ID, temp, lux, led, buzzer);
 
 		mqtt_pub(topic, bufmsg, strlen(bufmsg));
 		

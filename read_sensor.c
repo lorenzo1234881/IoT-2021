@@ -8,33 +8,18 @@
 #include "analog_util.h"
 
 #define TEMPSENSORPIN 0  /* A0 PA0 */
-#define REDSENSORPIN 1   /* A1 PA1 */
-#define GREENSENSORPIN 3 /* A3 PB0 */
-#define BLUESENSORPIN 4  /* A4 PC1 */
+#define PHOTORESPIN 4  /* A4 PC1 */
 
 #define ADC_RES ADC_RES_12BIT
 
-// init adc lines
 int init_sensors(void)
-{
-	const int analogpins[] = {REDSENSORPIN, GREENSENSORPIN, BLUESENSORPIN, TEMPSENSORPIN};
-	const int npins = sizeof(analogpins) / sizeof(int);
-	
-	int errpin;
-
-	for(int i = 0; i < npins; i++) {
-		if (adc_init(ADC_LINE(analogpins[i])) < 0) {
-			errpin = analogpins[i];
-			goto err;
-		}
+{	
+	if (adc_init(ADC_LINE(PHOTORESPIN)) < 0) {
+		printf("Initialization of ADC_LINE(%u) failed\n", PHOTORESPIN);
+		return -1;		
 	}
 
 	return 0;
-
-err:
-	printf("Initialization of ADC_LINE(%u) failed\n", errpin);
-	return -1;
-
 }
 
 int read_photores(int photorespin)
@@ -56,11 +41,9 @@ int read_photores(int photorespin)
 	return lux;
 }
 
-void read_rgb(int* r, int* g, int* b)
+int read_lux(void)
 {
-	*r = read_photores(REDSENSORPIN);
-	*g = read_photores(GREENSENSORPIN);
-	*b = read_photores(BLUESENSORPIN);
+	return read_photores(PHOTORESPIN);
 }
 
 int read_temperature(void)

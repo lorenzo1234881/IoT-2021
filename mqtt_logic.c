@@ -52,7 +52,7 @@ int mqtt_init(emcute_topic_t* topic)
 #endif
 
     unsigned flags_sub = EMCUTE_QOS_0;
-    subscription.cb = update_state;
+    subscription.cb = update_ctl_states;
     subscription.topic.name = MQTT_SUB_TOPIC;
     if (emcute_sub(&subscription, flags_sub) != EMCUTE_OK) {
         printf("error: unable to subscribe to %s\n", MQTT_SUB_TOPIC);

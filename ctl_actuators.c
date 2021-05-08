@@ -6,7 +6,7 @@
 
 #define LEDPIN GPIO_PIN(PORT_B, 5)
 
-#define MAX_TOKENS 3
+#define MAX_TOKENS 5
 
 #define POWERON_BUZZER() {\
     pwm_poweron(0); \
@@ -24,7 +24,8 @@
     gpio_clear(LEDPIN); \
 }
 
-int ctl_actuators_state;
+int led_state;
+int buzzer_state;
 
 void init_actuators(void)
 {
@@ -38,12 +39,18 @@ void init_actuators(void)
     xtimer_periodic_wakeup(&t, (1000LU * US_PER_MS));
     pwm_poweroff(0);
 
-    ctl_actuators_state = STATE_NORMAL;
+    led_state = 0;
+    buzzer_state = 0;
 }
 
-int read_state(void)
+int read_led(void)
 {
-    return ctl_actuators_state;
+    return led_state;
+}
+
+int read_buzzer(void)
+{
+    return buzzer_state;
 }
 
 static int jsoneq(const char *json, jsmntok_t *tok, const char *s) {
@@ -54,7 +61,7 @@ static int jsoneq(const char *json, jsmntok_t *tok, const char *s) {
   return -1;
 }
 
-void update_state(const emcute_topic_t *topic, void *data, size_t len)
+void update_ctl_states(const emcute_topic_t *topic, void *data, size_t len)
 {
     char *in = (char *)data;
 
@@ -69,7 +76,8 @@ void update_state(const emcute_topic_t *topic, void *data, size_t len)
 
     jsmn_parser p;
     jsmntok_t t[MAX_TOKENS];
-    int update_state = 0;
+    int new_led_state = -1;
+    int new_buzzer_state = -1;
     int r;
     int i;
 
@@ -84,9 +92,14 @@ void update_state(const emcute_topic_t *topic, void *data, size_t len)
         printf("Object expected\n");
     }
 
-    for( i = 1; i < r; i++)
-        if (jsoneq(in, &t[i], "plant_status") == 0) {            
-            update_state = atoi(in + t[i+1].start);
+    for( i = 1; i < r; i++) 
+    {
+        if (jsoneq(in, &t[i], "led") == 0) {            
+            new_led_state = atoi(in + t[i+1].start);
+            i++;
+        }
+        else if (jsoneq(in, &t[i], "buzzer") == 0) {            
+            new_buzzer_state = atoi(in + t[i+1].start);
             i++;
         }
         else {
@@ -94,32 +107,37 @@ void update_state(const emcute_topic_t *topic, void *data, size_t len)
             in + t[i].start);
             return;
         }
-
-    if(update_state == ctl_actuators_state)
-        return;
-
-#if CTL_ACTUATORS_DEBUG
-    printf("change state to %d\n", update_state);
-#endif
-
-    switch (update_state)
-    {
-    case STATE_NORMAL:
-        POWEROFF_LED();
-        POWEROFF_BUZZER();
-        break;
-    case STATE_ALLARMING:
-        POWERON_LED();
-        POWEROFF_BUZZER();
-        break;
-    case STATE_CRITICAL:
-        POWERON_LED();
-        POWERON_BUZZER();
-        break;
-    default:
-        printf("format state non recognized\n");
-        return;
     }
 
-    ctl_actuators_state = update_state;
+    if(new_led_state != -1 && new_led_state != led_state)
+    {
+        if(new_led_state) {
+            POWERON_LED();
+        }
+        else {
+            POWEROFF_LED();
+        }
+
+        led_state = new_led_state;
+
+        #if CTL_ACTUATORS_DEBUG
+        printf("change state led: %d\n", led_state);
+        #endif
+    }
+
+    if(new_buzzer_state != -1 && new_buzzer_state != buzzer_state)
+    {
+        if(new_buzzer_state) {
+            POWERON_BUZZER();
+        }
+        else {
+            POWEROFF_BUZZER();
+        }
+        
+        buzzer_state = new_buzzer_state;
+
+        #if CTL_ACTUATORS_DEBUG
+        printf("change state led: %d\n", buzzer_state);
+        #endif
+    }
 }

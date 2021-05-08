@@ -1,34 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <title> Example </title>
-<style>
-body { background-color: #4b9dbc; }
-</style>
-</head>
-<body>
-<ul class="sensor-values">
-</ul>
 <script>
 
+var startDashBoard = () => {
 
-  var previous = null;
-  var current = null;
-  setInterval(function() {
-    
-    $("ul").empty();
-    $.getJSON( "data_sensor.json", function( data ) {
-      var items = [];
-      $.each( data, function( key, val ) {
-        items.push( "<li id='" + key + "'>" + key + " = " + val + "</li>" );
-      });
+async function getDataFrom(url) {
+	const response = await fetch(url, {
+		method: 'GET',
+		headers: {
+		'Content-Type': 'application/json'
+		}	
+	});
+	
+	return response;
+}
 
-    $("ul").html(items.join(""));
-    
-    });
-  },1000);
+function getLastValues() {
+	getDataFrom('https://w0mt2ohz0m.execute-api.us-east-1.amazonaws.com/last-values')
+	.then(response => response.json())
+	.then(data => {
+	data = JSON.parse(data);
+
+		document.getElementById("temperature").innerHTML = data.temperature;
+		document.getElementById("light").innerHTML = data.light;
+
+		document.getElementById("ledValue").innerHTML = data.led;
+		document.getElementById("buzzerValue").innerHTML = data.buzzer;
+	})
+	.catch(error => console.log('error', error));
+
+	setTimeout(getLastValues, 5000);
+};
+
+function getAggregateValues() {
+	getDataFrom('https://w0mt2ohz0m.execute-api.us-east-1.amazonaws.com/aggregate-values')
+	.then(response => response.json())
+	.then(data => {
+	data = JSON.parse(data);
+	
+		var temperature = data.temperature;
+
+		document.getElementById("temperatureMax").innerHTML = temperature.max;	
+		document.getElementById("temperatureMin").innerHTML = temperature.min;
+		document.getElementById("temperatureAvg").innerHTML = temperature.avg;
+		
+		var light = data.light;
+
+		document.getElementById("lightMax").innerHTML = light.max;
+		document.getElementById("lightMin").innerHTML = light.min;
+		document.getElementById("lightAvg").innerHTML = light.avg;
+	})
+	.catch(error => console.log('error', error));
+
+	setTimeout(getAggregateValues, 10000);
+};
+
+getLastValues();
+getAggregateValues();
+
+}
 </script>
+</head>
+
+
+<body onload=startDashBoard()>
+
+<script>
+function postDataTo(url, data) {
+	const response = fetch(url, {
+		method: 'POST',
+		headers: {
+		'Content-Type': 'application/json'
+		},
+	body: JSON.stringify(data)
+	});
+	return response;
+	}
+
+</script>
+<h2>Data sensors values</h2>
+	<p> Temperature
+		<span id="temperature"></span>
+		<span id="temperatureMax"></span>
+		<span id="temperatureMin"></span>
+		<span id="temperatureAvg"></span>
+	</p>
+	<p> Light 
+		<span id="light"></span>
+		<span id="lightMax"></span>
+		<span id="lightMin"></span>
+		<span id="lightAvg"></span>
+	</p>
+	<h2> Actutators control and values</h2>
+	<p>
+	LED: <span id="ledValue"></span>
+	<p>
+	<input id="ledTurnOn" type="button" value="turn on" onclick="postDataTo('https://w0mt2ohz0m.execute-api.us-east-1.amazonaws.com/control-actuators', {led: 1})">
+	<input id="ledTurnOff" type="button" value="turn off" onclick="postDataTo('https://w0mt2ohz0m.execute-api.us-east-1.amazonaws.com/control-actuators', {led: 0})">
+	</p>
+	</p>
+	<p>
+	BUZZER: <span id="buzzerValue"></span>
+	<p>
+	<input id="buzzerTurnOn" type="button" value="turn on" onclick="postDataTo('https://w0mt2ohz0m.execute-api.us-east-1.amazonaws.com/control-actuators', {buzzer: 1})">
+	<input id="buzzerTurnOff" type="button" value="turn off" onclick="postDataTo('https://w0mt2ohz0m.execute-api.us-east-1.amazonaws.com/control-actuators', {buzzer: 0})">
+	</p>
+	</p>
 </body>
 </html>
