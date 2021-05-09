@@ -1,0 +1,1 @@
+1. follow https://www.iot-lab.info/learn/tutorials/riot/riot-mqtt-sn-a8-m3/
