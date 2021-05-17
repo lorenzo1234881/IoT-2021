@@ -31,6 +31,51 @@ const AggregateVal = {
     }
 };
 
+const AggValPerDevice = {
+  "deviceId": 0,
+  "aggValTemperature": undefined,
+  "aggValLight": undefined
+};
+
+const AggValPerDeviceList = {
+  "list": [],
+  updateAggVals: function(deviceId, temperature, light) {
+    
+    let aggValOfDev = 0
+    let found = false;
+    
+    for(let aggVal of this.list) {
+      if(aggVal.deviceId == deviceId) {
+        aggValOfDev = aggVal;
+
+        found = true;
+        break;
+      }
+    }
+    
+    if(!found) {
+      aggValOfDev = Object.create(AggValPerDevice);
+      aggValOfDev.deviceId = deviceId;
+      aggValOfDev.aggValTemperature = Object.create(AggregateVal);
+      aggValOfDev.aggValLight = Object.create(AggregateVal);
+      
+      this.list.push(aggValOfDev);
+    }
+      aggValOfDev.aggValTemperature.updateMax(temperature);
+      aggValOfDev.aggValTemperature.updateMin(temperature);
+      aggValOfDev.aggValTemperature.updateSum(temperature);
+      
+      aggValOfDev.aggValLight.updateMax(light);
+      aggValOfDev.aggValLight.updateMin(light);
+      aggValOfDev.aggValLight.updateSum(light);
+  },
+  computeAvg: function(){
+    for(let aggVal of this.list) {
+      aggVal.aggValTemperature.computeAvg();
+      aggVal.aggValLight.computeAvg();
+    }
+  }
+};
 
 exports.handler = async (event, context) => {
   let body;
@@ -41,18 +86,49 @@ exports.handler = async (event, context) => {
     'Access-Control-Allow-Method': '*',
     "Access-Control-Allow-Origin": "*"
   };
-
+  
   try {
+    
+    let currentTime;
+    
     switch (event.routeKey) {
       case "GET /last-values":
         var data = await dynamo.scan({ TableName: "IoT_IA1", limit: 1}).promise();
         
-        var last_value = {}
+        var last_value = {
+          temperature: undefined,
+          light: undefined,
+          light: undefined,
+          buzzer: undefined
+        }
         
         if(data.ScannedCount >= 1) {
             last_value = data.Items[data.ScannedCount-1];
-            if(Date.now() - last_value.timestamp >  hour)
-              last_value = undefined;
+            // if(Date.now() - last_value.timestamp >  hour)
+            //   last_value = undefined;
+        }
+          
+        body = JSON.stringify(last_value);
+        
+        break;
+            case "GET /last-values/{deviceId}":
+        var data = await dynamo.scan({ TableName: "IoT_IA1", limit: 1}).promise();
+        
+        var last_value = {
+          temperature: undefined,
+          light: undefined,
+          light: undefined,
+          buzzer: undefined
+        }
+
+        currentTime = Date.now();
+        
+        for (var item of data.Items)
+        {        
+          if(item.deviceId == event.pathParameters.deviceId && currentTime-item.timestamp ) {
+            last_value = item;
+            break;
+          }
         }
           
         body = JSON.stringify(last_value);
@@ -64,11 +140,45 @@ exports.handler = async (event, context) => {
         var aggValTemperature = Object.create(AggregateVal);
         var aggValLight = Object.create(AggregateVal);
 
-        const currentTime = Date.now();
+        currentTime = Date.now();
         
         for (var item of data.Items)
         {
-          if(currentTime - item.timestamp >  hour)
+          // if(currentTime - item.timestamp >  hour)
+          //   continue;
+          
+          aggValTemperature.updateMax(item.temperature);
+          aggValTemperature.updateMin(item.temperature);
+          aggValTemperature.updateSum(item.temperature);
+          
+          aggValLight.updateMax(item.light);
+          aggValLight.updateMin(item.light);
+          aggValLight.updateSum(item.light);
+        }
+        aggValTemperature.computeAvg();
+        aggValLight.computeAvg();
+        
+        var jsonMsg = {
+            light:aggValLight,
+            temperature: aggValTemperature
+        };
+          
+        body = JSON.stringify(jsonMsg);
+        break;
+
+      case "GET /aggregate-values/{deviceId}":
+        
+        var data = await dynamo.scan({ TableName: "IoT_IA1"}).promise();
+        var aggValTemperature = Object.create(AggregateVal);
+        var aggValLight = Object.create(AggregateVal);
+
+        currentTime = Date.now();
+        
+        for (var item of data.Items)
+        {
+          // if(currentTime - item.timestamp >  hour)
+          //   continue;
+          if(item.deviceId != event.pathParameters.deviceId)
             continue;
           
           aggValTemperature.updateMax(item.temperature);
@@ -90,6 +200,26 @@ exports.handler = async (event, context) => {
         body = JSON.stringify(jsonMsg);
         break;
         
+      case "GET /aggregate-values-device":
+        var data = await dynamo.scan({ TableName: "IoT_IA1"}).promise();
+        currentTime = Date.now();
+        
+        for (var item of data.Items)
+        {
+          // if(currentTime - item.timestamp >  hour)
+          //  continue;
+          
+          AggValPerDeviceList.updateAggVals(item.deviceId, item.temperature, item.light);
+        }
+        AggValPerDeviceList.computeAvg();
+
+        console.log(AggValPerDeviceList.list[0].deviceId)
+        console.log(AggValPerDeviceList.list[0].aggValTemperature)
+        console.log(AggValPerDeviceList.list[0].aggValLight)
+
+        body = JSON.stringify(AggValPerDeviceList);
+        break;
+      
       case "OPTIONS /{proxy+}":
         break;
       default:
