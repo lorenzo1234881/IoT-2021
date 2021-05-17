@@ -31,9 +31,9 @@ function getLastValuesDevice() {
 		document.getElementById("temperature").innerHTML = data.temperature;
 		document.getElementById("light").innerHTML = data.light;
 
-		document.getElementById("ledValue").innerHTML = data.led;
-		document.getElementById("buzzerValue").innerHTML = data.buzzer;
-	
+		document.getElementById("led0Value").innerHTML = data.led0;
+		document.getElementById("led1Value").innerHTML = data.led1;
+		document.getElementById("led2Value").innerHTML = data.led2;	
 	})
 	.catch(error => console.log('error', error));
 
@@ -130,10 +130,13 @@ function controlActuator(newActuatorState) {
 		<span id="light"></span>
 	</p>
 	<p>
-		led <span id="ledValue"></span>
+		led0 <span id="led0Value"></span>
 	</p>
 	<p>
-		buzzer <span id="buzzerValue"></span>
+		led1 <span id="led1Value"></span>
+	</p>
+	<p>
+		led2 <span id="led2Value"></span>
 	</p>
 <h2> Aggregated data from one specific device</h2>
 	<input type="number" id="deviceIdAgg">
@@ -160,9 +163,11 @@ function controlActuator(newActuatorState) {
 	</p>
 <h2> Actutators control of a specific device</h2>
 	<input type="number" id="deviceIdAct">
-	<input id="ledTurnOn" type="button" value="turn on" onclick="controlActuator({led: 1})">
-	<input id="ledTurnOff" type="button" value="turn off" onclick="controlActuator({led: 0})">
-	<input id="buzzerTurnOn" type="button" value="turn on" onclick="controlActuator({buzzer: 1})">
-	<input id="buzzerTurnOff" type="button" value="turn off" onclick="controlActuator({buzzer: 0})">
+	<input id="led0TurnOn" type="button" value="turn on" onclick="controlActuator({led0: 1})">
+	<input id="led0TurnOff" type="button" value="turn off" onclick="controlActuator({led0: 0})">
+	<input id="led1TurnOn" type="button" value="turn on" onclick="controlActuator({led1: 1})">
+	<input id="led1TurnOff" type="button" value="turn off" onclick="controlActuator({led1: 0})">
+	<input id="led2TurnOn" type="button" value="turn on" onclick="controlActuator({led2: 1})">
+	<input id="led2TurnOff" type="button" value="turn off" onclick="controlActuator({led2: 0})">
 </body>
 </html>

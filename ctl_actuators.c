@@ -59,8 +59,14 @@ void update_ctl_states(const emcute_topic_t *topic, void *data, size_t len)
         printf("Object expected\n");
     }
 
+    int deviceId = -1;
+
     for( i = 1; i < r; i++) 
     {
+        if (jsoneq(in, &t[i], "deviceId") == 0) {            
+            deviceId = atoi(in + t[i+1].start);
+            i++;
+        }
         if (jsoneq(in, &t[i], "led0") == 0) {            
             new_led_state.led0 = atoi(in + t[i+1].start);
             i++;
@@ -79,6 +85,9 @@ void update_ctl_states(const emcute_topic_t *topic, void *data, size_t len)
             return;
         }
     }
+
+    if(deviceId != DEVICE_ID)
+        break;
 
     if(new_led_state.all != -1 && new_led_state.all != curr_led_state.all)
     {
