@@ -19,6 +19,10 @@ int init_sensors(void)
 		return -1;		
 	}
 
+	if (adc_init(ADC_LINE(TEMPSENSORPIN)) < 0) {
+		printf("Initialization of ADC_LINE(%u) failed\n", TEMPSENSORPIN);
+		return -1;
+	}
 	return 0;
 }
 
