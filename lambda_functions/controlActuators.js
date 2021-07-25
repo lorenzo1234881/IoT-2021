@@ -7,7 +7,7 @@ exports.handler = async(event) => {
     
     console.log("Event => " + JSON.stringify(event));
     var params = {
-        topic: "awsiot_to_localgateway",
+        topic: "aws_to_local_1",
         payload: event.body,
         qos: 0
     };

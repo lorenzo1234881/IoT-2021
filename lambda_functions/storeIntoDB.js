@@ -77,7 +77,7 @@ exports.handler = function(event, context) {
     }
     
     var paramsiot = {
-        topic: "awsiot_to_localgateway",
+        topic: "aws_to_local_1",
         payload: JSON.stringify(msgToPublish),
         qos: 0
     };

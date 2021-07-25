@@ -18,7 +18,7 @@ Mosquitto, a message broker that implements several versions of the MQTT protoco
 Rsmb, a message broker that implements the MQTT-SN protocol, a protocol even lighter than MQTT.\
 ### Cloud
 The following AWS service are used for the project:
-* IoT-Core: for reading and publishing data to two topics 'localgateway_to_awsiot' and 'awsiot_to_localgateway'.
+* IoT-Core: for reading and publishing data to two topics 'local_to_aws_1' and 'aws_to_local_2'.
 * DynamoDB: for storing data received from the sensor nodes
 * S3 bucket: for hosting the dashboard that the client uses
 * Gateway API: useful to offer an interface between aws services and the dashboard
@@ -29,8 +29,8 @@ The following AWS service are used for the project:
 
 
 ## Architecture
-Each microcontroller reads values from the sensor and transmitts them using MQTT-SN to a gateway that will act both as MQTT-SN broker, MQTT broker and transparent bridge between the two. The messages from the sensor node to the cloud is sent to 'localgateway_to_awsiot'. Each microcontroller also subscribes to 'awsiot_to_localgateway' where aws will publish data telling the sensor node which actuator activate. The nucleo-f410re will send data to the gateway running rsmb and mosquitto that they act as MQTT-SN/transparent bridge and MQTT broker. Mosquitto then connects to the AWS IoT Core that will send the data that receives to a lambda function 'storeIntoDB', which send data to dyanmoDB and also publish data to 'awsiot_to_localgateway if 'light' and 'temperature' are lower than a fixed threshold.\
-Meanwhile the dashboard fetches the data trhough the API offered by the API gateway, that will allow to: receive the last values red, receive the maximum, minimum and the average of the values received by aws in the last hour, and activate the actuators publishing on the 'awsiot_to_localgateway' topic. The lambda  'getValues.js' is responsable to fetch the data from the dynamoDB, 'controlActuators.js', instead is responsable to publish data on 'awsiot_to_localgateway'. 
+Each microcontroller reads values from the sensor and transmitts them using MQTT-SN to a gateway that will act both as MQTT-SN broker, MQTT broker and transparent bridge between the two. The messages from the sensor node to the cloud is sent to 'local_to_aws_1'. Each microcontroller also subscribes to 'aws_to_local_1' where aws will publish data telling the sensor node which actuator activate. The nucleo-f410re will send data to the gateway running rsmb and mosquitto that they act as MQTT-SN/transparent bridge and MQTT broker. Mosquitto then connects to the AWS IoT Core that will send the data that receives to a lambda function 'storeIntoDB', which send data to dyanmoDB and also publish data to 'aws_to_local_1' if 'light' and 'temperature' are lower than a fixed threshold.\
+Meanwhile the dashboard fetches the data trhough the API offered by the API gateway, that will allow to: receive the last values red, receive the maximum, minimum and the average of the values received by aws in the last hour, and activate the actuators publishing on the 'aws_to_local_1' topic. The lambda  'getValues.js' is responsable to fetch the data from the dynamoDB, 'controlActuators.js', instead is responsable to publish data on 'aws_to_local_1'. 
 
 
 <img src="https://github.com/lorenzo1234881/IoT-IA1-2021/blob/main/images/architecture.png" width=800>

@@ -17,13 +17,12 @@
 	# MQTT-S outgoing local bridge
 	connection local_bridge_to_mosquitto
 		address 127.0.0.1:1883
-		topic localgateway_to_awsiot out
-		topic awsiot_to_localgateway in
-		topic both_directions both
+		topic local_to_aws_1 out
+		topic aws_to_local_1 in
 '''
 5. follow https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteHosting.html
 6. create aws rule:
-"SELECT *, cast(timestamp() as String) as timestamp FROM 'localgateway_to_awsiot'"
+"SELECT *, cast(timestamp() as String) as timestamp FROM 'local_to_aws_1'"
 "Send a message to A Lambda function"
 7. remove all fe80:: ip routes or mosquitto will send udp packet to the wrong interface (eth0 instead of tap0)
 8. https://aws.amazon.com/blogs/compute/implementing-a-serverless-aws-iot-backend-with-aws-lambda-and-amazon-dynamodb/
