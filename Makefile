@@ -42,8 +42,8 @@ QUIET ?= 1
 
 # The Broker address, port and the default MQTT topic to subscribe.
 SERVER_PORT = 1885
-MQTT_PUB_TOPIC = localgateway_to_awsiot
-MQTT_SUB_TOPIC = awsiot_to_localgateway
+MQTT_PUB_TOPIC = local_to_aws_2
+MQTT_SUB_TOPIC = aws_to_local_2
 
 DEVICE_ID = 1
 

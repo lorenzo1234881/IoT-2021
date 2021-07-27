@@ -1,7 +1,7 @@
 console.log('Loading function');
 var AWS = require('aws-sdk');
 var dynamo = new AWS.DynamoDB.DocumentClient();
-var table = "IoT_IA1";
+var table = "IoT_IA2";
 
 var iotdata = new AWS.IotData({ endpoint: 'aezhc7emqzhxh-ats.iot.us-east-1.amazonaws.com' });
 
@@ -77,7 +77,7 @@ exports.handler = function(event, context) {
     }
     
     var paramsiot = {
-        topic: "awsiot_to_localgateway",
+        topic: "aws_to_local_2",
         payload: JSON.stringify(msgToPublish),
         qos: 0
     };

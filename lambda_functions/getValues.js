@@ -1,8 +1,8 @@
 const AWS = require("aws-sdk");
 
 const dynamo = new AWS.DynamoDB.DocumentClient();
-
 const hour = 3600000;
+const tablename = "IoT_IA2";
 
 const AggregateVal = {
     max: 0,
@@ -93,7 +93,7 @@ exports.handler = async (event, context) => {
     
     switch (event.routeKey) {
       case "GET /last-values":
-        var data = await dynamo.scan({ TableName: "IoT_IA1", limit: 1}).promise();
+        var data = await dynamo.scan({ TableName: tablename, limit: 1}).promise();
         
         var last_value = {
           temperature: undefined,
@@ -112,7 +112,7 @@ exports.handler = async (event, context) => {
         
         break;
             case "GET /last-values/{deviceId}":
-        var data = await dynamo.scan({ TableName: "IoT_IA1", limit: 1}).promise();
+        var data = await dynamo.scan({ TableName: tablename, limit: 1}).promise();
         
         var last_value = {
           temperature: undefined,
@@ -136,7 +136,7 @@ exports.handler = async (event, context) => {
         break;
       case "GET /aggregate-values":
         
-        var data = await dynamo.scan({ TableName: "IoT_IA1"}).promise();
+        var data = await dynamo.scan({ TableName: tablename}).promise();
         var aggValTemperature = Object.create(AggregateVal);
         var aggValLight = Object.create(AggregateVal);
 
@@ -168,7 +168,7 @@ exports.handler = async (event, context) => {
 
       case "GET /aggregate-values/{deviceId}":
         
-        var data = await dynamo.scan({ TableName: "IoT_IA1"}).promise();
+        var data = await dynamo.scan({ TableName: tablename}).promise();
         var aggValTemperature = Object.create(AggregateVal);
         var aggValLight = Object.create(AggregateVal);
 
@@ -201,7 +201,7 @@ exports.handler = async (event, context) => {
         break;
         
       case "GET /aggregate-values-device":
-        var data = await dynamo.scan({ TableName: "IoT_IA1"}).promise();
+        var data = await dynamo.scan({ TableName: tablename}).promise();
         currentTime = Date.now();
         
         for (var item of data.Items)

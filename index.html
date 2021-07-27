@@ -21,7 +21,7 @@ async function getDataFrom(url) {
 function getLastValuesDevice() {	
 	let devId = document.getElementById("deviceIdLast").value;
 
-	getDataFrom('https://w0mt2ohz0m.execute-api.us-east-1.amazonaws.com/last-values/'+devId)
+	getDataFrom('https://ytm5feii9h.execute-api.us-east-1.amazonaws.com/last-values/'+devId)
 	.then(response => response.json())
 	.then(data => {
 	data = JSON.parse(data);
@@ -44,7 +44,7 @@ function getLastValuesDevice() {
 function getAggregateValuesDevice() {
 	let devId = document.getElementById("deviceIdAgg").value;
 
-	getDataFrom('https://w0mt2ohz0m.execute-api.us-east-1.amazonaws.com/aggregate-values/'+devId)
+	getDataFrom('https://ytm5feii9h.execute-api.us-east-1.amazonaws.com/aggregate-values/'+devId)
 	.then(response => response.json())
 	.then(data => {
 	data = JSON.parse(data);
@@ -67,7 +67,7 @@ function getAggregateValuesDevice() {
 };
 
 function getAggregateValues() {
-	getDataFrom('https://w0mt2ohz0m.execute-api.us-east-1.amazonaws.com/aggregate-values')
+	getDataFrom('https://ytm5feii9h.execute-api.us-east-1.amazonaws.com/aggregate-values')
 	.then(response => response.json())
 	.then(data => {
 	data = JSON.parse(data);
@@ -117,7 +117,7 @@ function postDataTo(url, data) {
 function controlActuator(newActuatorState) {
 	let deviceIdVal = document.getElementById("deviceIdAct").value;
 	newActuatorState["deviceId"] = deviceIdVal;
-	postDataTo('https://w0mt2ohz0m.execute-api.us-east-1.amazonaws.com/control-actuators', newActuatorState);
+	postDataTo('https://ytm5feii9h.execute-api.us-east-1.amazonaws.com/control-actuators', newActuatorState);
 }
 
 </script>
