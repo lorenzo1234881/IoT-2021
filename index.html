@@ -18,8 +18,56 @@ async function getDataFrom(url) {
 	return response;
 }
 
-function getLastValuesDevice() {	
-	let devId = document.getElementById("deviceIdLast").value;
+//*********//
+// IoT-IA1 //
+//*********//
+
+function getLastValuesIA1() {
+	getDataFrom('https://w0mt2ohz0m.execute-api.us-east-1.amazonaws.com/last-values')
+	.then(response => response.json())
+	.then(data => {
+	data = JSON.parse(data);
+
+		document.getElementById("temperatureIA1").innerHTML = data.temperature;
+		document.getElementById("lightIA1").innerHTML = data.light;
+
+		document.getElementById("ledValueIA1").innerHTML = data.led;
+		document.getElementById("buzzerValueIA1").innerHTML = data.buzzer;
+	})
+	.catch(error => console.log('error', error));
+
+	setTimeout(getLastValuesIA1, 5000);
+};
+
+function getAggregateValuesIA1() {
+	getDataFrom('https://w0mt2ohz0m.execute-api.us-east-1.amazonaws.com/aggregate-values')
+	.then(response => response.json())
+	.then(data => {
+	data = JSON.parse(data);
+	
+		var temperature = data.temperature;
+
+		document.getElementById("temperatureMaxIA1").innerHTML = temperature.max;	
+		document.getElementById("temperatureMinIA1").innerHTML = temperature.min;
+		document.getElementById("temperatureAvgIA1").innerHTML = temperature.avg;
+		
+		var light = data.light;
+
+		document.getElementById("lightMaxIA1").innerHTML = light.max;
+		document.getElementById("lightMinIA1").innerHTML = light.min;
+		document.getElementById("lightAvgIA1").innerHTML = light.avg;
+	})
+	.catch(error => console.log('error', error));
+
+	setTimeout(getAggregateValuesIA1, 10000);
+};
+
+//*********//
+// IoT-IA2 //
+//*********//
+
+function getLastValuesDeviceIA2() {	
+	let devId = document.getElementById("deviceIdLastIA2").value;
 
 	getDataFrom('https://ytm5feii9h.execute-api.us-east-1.amazonaws.com/last-values/'+devId)
 	.then(response => response.json())
@@ -28,21 +76,21 @@ function getLastValuesDevice() {
 
 		console.log(data)
 		
-		document.getElementById("temperature").innerHTML = data.temperature;
-		document.getElementById("light").innerHTML = data.light;
+		document.getElementById("temperatureIA2").innerHTML = data.temperature;
+		document.getElementById("lightIA2").innerHTML = data.light;
 
-		document.getElementById("led0Value").innerHTML = data.led0;
-		document.getElementById("led1Value").innerHTML = data.led1;
-		document.getElementById("led2Value").innerHTML = data.led2;	
+		document.getElementById("led0ValueIA2").innerHTML = data.led0;
+		document.getElementById("led1ValueIA2").innerHTML = data.led1;
+		document.getElementById("led2ValueIA2").innerHTML = data.led2;	
 	})
 	.catch(error => console.log('error', error));
 
 
-	setTimeout(getLastValuesDevice, 10000);
+	setTimeout(getLastValuesDeviceIA2, 10000);
 };
 
-function getAggregateValuesDevice() {
-	let devId = document.getElementById("deviceIdAgg").value;
+function getAggregateValuesDeviceIA2() {
+	let devId = document.getElementById("deviceIdAggIA2").value;
 
 	getDataFrom('https://ytm5feii9h.execute-api.us-east-1.amazonaws.com/aggregate-values/'+devId)
 	.then(response => response.json())
@@ -51,22 +99,22 @@ function getAggregateValuesDevice() {
 	
 		var temperature = data.temperature;
 
-		document.getElementById("temperatureDevMax").innerHTML = temperature.max;	
-		document.getElementById("temperatureDevMin").innerHTML = temperature.min;
-		document.getElementById("temperatureDevAvg").innerHTML = temperature.avg;
+		document.getElementById("temperatureDevMaxIA2").innerHTML = temperature.max;	
+		document.getElementById("temperatureDevMinIA2").innerHTML = temperature.min;
+		document.getElementById("temperatureDevAvgIA2").innerHTML = temperature.avg;
 		
 		var light = data.light;
 
-		document.getElementById("lightDevMax").innerHTML = light.max;
-		document.getElementById("lightDevMin").innerHTML = light.min;
-		document.getElementById("lightDevAvg").innerHTML = light.avg;
+		document.getElementById("lightDevMaxIA2").innerHTML = light.max;
+		document.getElementById("lightDevMinIA2").innerHTML = light.min;
+		document.getElementById("lightDevAvgIA2").innerHTML = light.avg;
 	})
 	.catch(error => console.log('error', error));
 
-	setTimeout(getAggregateValuesDevice, 10000);
+	setTimeout(getAggregateValuesDeviceIA2, 10000);
 };
 
-function getAggregateValues() {
+function getAggregateValuesIA2() {
 	getDataFrom('https://ytm5feii9h.execute-api.us-east-1.amazonaws.com/aggregate-values')
 	.then(response => response.json())
 	.then(data => {
@@ -74,27 +122,33 @@ function getAggregateValues() {
 	
 		var temperature = data.temperature;
 
-		document.getElementById("temperatureMax").innerHTML = temperature.max;	
-		document.getElementById("temperatureMin").innerHTML = temperature.min;
-		document.getElementById("temperatureAvg").innerHTML = temperature.avg;
+		document.getElementById("temperatureMaxIA2").innerHTML = temperature.max;	
+		document.getElementById("temperatureMinIA2").innerHTML = temperature.min;
+		document.getElementById("temperatureAvgIA2").innerHTML = temperature.avg;
 		
 		var light = data.light;
 
-		document.getElementById("lightMax").innerHTML = light.max;
-		document.getElementById("lightMin").innerHTML = light.min;
-		document.getElementById("lightAvg").innerHTML = light.avg;
+		document.getElementById("lightMaxIA2").innerHTML = light.max;
+		document.getElementById("lightMinIA2").innerHTML = light.min;
+		document.getElementById("lightAvgIA2").innerHTML = light.avg;
 	})
 	.catch(error => console.log('error', error));
 
-	setTimeout(getAggregateValues, 10000);
+	setTimeout(getAggregateValuesIA2, 10000);
 };
 
-document.getElementById("deviceIdLast").value = 1;
-document.getElementById("deviceIdAgg").value = 1;
+document.getElementById("deviceIdLastIA2").value = 1;
+document.getElementById("deviceIdAggIA2").value = 1;
 
-getAggregateValues();
-getAggregateValuesDevice();
-getLastValuesDevice();
+
+// IoT-IA1 //
+getLastValuesIA1();
+getAggregateValuesIA1();
+
+// IoT-IA2 //
+getAggregateValuesIA2();
+getAggregateValuesDeviceIA2();
+getLastValuesDeviceIA2();
 }
 </script>
 </head>
@@ -114,60 +168,102 @@ function postDataTo(url, data) {
 	return response;
 	}
 
-function controlActuator(newActuatorState) {
-	let deviceIdVal = document.getElementById("deviceIdAct").value;
+function controlActuatorIA2(newActuatorState) {
+	let deviceIdVal = document.getElementById("deviceIdActIA2").value;
 	newActuatorState["deviceId"] = deviceIdVal;
 	postDataTo('https://ytm5feii9h.execute-api.us-east-1.amazonaws.com/control-actuators', newActuatorState);
 }
-
 </script>
-<h2>Last values from one specific device </h2>
-	<input type="number" id="deviceIdLast">
+
+
+
+<!----------->
+<!--IoT-IA1-->
+<!----------->
+
+<h2>Data sensors values</h2>
 	<p> Temperature
-		<span id="temperature"></span>
+		<span id="temperatureIA1"></span>
+		<span id="temperatureMaxIA1"></span>
+		<span id="temperatureMinIA1"></span>
+		<span id="temperatureAvgIA1"></span>
 	</p>
 	<p> Light 
-		<span id="light"></span>
+		<span id="lightIA1"></span>
+		<span id="lightMaxIA1"></span>
+		<span id="lightMinIA1"></span>
+		<span id="lightAvgIA1"></span>
+	</p>
+	<h2> Actutators control and values</h2>
+	<p>
+	LED: <span id="ledValueIA1"></span>
+	<p>
+	<input id="ledTurnOn" type="button" value="turn on" onclick="postDataTo('https://w0mt2ohz0m.execute-api.us-east-1.amazonaws.com/control-actuators', {led: 1})">
+	<input id="ledTurnOff" type="button" value="turn off" onclick="postDataTo('https://w0mt2ohz0m.execute-api.us-east-1.amazonaws.com/control-actuators', {led: 0})">
+	</p>
 	</p>
 	<p>
-		led0 <span id="led0Value"></span>
+	BUZZER: <span id="buzzerValueIA1"></span>
+	<p>
+	<input id="buzzerTurnOn" type="button" value="turn on" onclick="postDataTo('https://w0mt2ohz0m.execute-api.us-east-1.amazonaws.com/control-actuators', {buzzer: 1})">
+	<input id="buzzerTurnOff" type="button" value="turn off" onclick="postDataTo('https://w0mt2ohz0m.execute-api.us-east-1.amazonaws.com/control-actuators', {buzzer: 0})">
+	</p>
+	</p>
+</body>
+</html>
+
+<!----------->
+<!--IoT-IA2-->
+<!----------->
+
+
+<h2>Last values from one specific device </h2>
+	<input type="number" id="deviceIdLastIA2">
+	<p> Temperature
+		<span id="temperatureIA2"></span>
+	</p>
+	<p> Light 
+		<span id="lightIA2"></span>
 	</p>
 	<p>
-		led1 <span id="led1Value"></span>
+		led0 <span id="led0ValueIA2"></span>
 	</p>
 	<p>
-		led2 <span id="led2Value"></span>
+		led1 <span id="led1ValueIA2"></span>
+	</p>
+	<p>
+		led2 <span id="led2ValueIA2"></span>
 	</p>
 <h2> Aggregated data from one specific device</h2>
-	<input type="number" id="deviceIdAgg">
+	<input type="number" id="deviceIdAggIA2">
 	<p> Temperature
-		<span id="temperatureDevMax"></span>
-		<span id="temperatureDevMin"></span>
-		<span id="temperatureDevAvg"></span>
+		<span id="temperatureDevMaxIA2"></span>
+		<span id="temperatureDevMinIA2"></span>
+		<span id="temperatureDevAvgIA2"></span>
 	</p>
 	<p> Light 
-		<span id="lightDevMax"></span>
-		<span id="lightDevMin"></span>
-		<span id="lightDevAvg"></span>
+		<span id="lightDevMaxIA2"></span>
+		<span id="lightDevMinIA2"></span>
+		<span id="lightDevAvgIA2"></span>
 	</p>
 <h2>Aggregated data from all devices</h2>
 	<p> Temperature
-		<span id="temperatureMax"></span>
-		<span id="temperatureMin"></span>
-		<span id="temperatureAvg"></span>
+		<span id="temperatureMaxIA2"></span>
+		<span id="temperatureMinIA2"></span>
+		<span id="temperatureAvgIA2"></span>
 	</p>
 	<p> Light 
-		<span id="lightMax"></span>
-		<span id="lightMin"></span>
-		<span id="lightAvg"></span>
+		<span id="lightMaxIA2"></span>
+		<span id="lightMinIA2"></span>
+		<span id="lightAvgIA2"></span>
 	</p>
 <h2> Actutators control of a specific device</h2>
-	<input type="number" id="deviceIdAct">
-	<input id="led0TurnOn" type="button" value="turn on" onclick="controlActuator({led0: 1})">
-	<input id="led0TurnOff" type="button" value="turn off" onclick="controlActuator({led0: 0})">
-	<input id="led1TurnOn" type="button" value="turn on" onclick="controlActuator({led1: 1})">
-	<input id="led1TurnOff" type="button" value="turn off" onclick="controlActuator({led1: 0})">
-	<input id="led2TurnOn" type="button" value="turn on" onclick="controlActuator({led2: 1})">
-	<input id="led2TurnOff" type="button" value="turn off" onclick="controlActuator({led2: 0})">
+	<input type="number" id="deviceIdActIA2">
+	<input id="led0TurnOn" type="button" value="turn on" onclick="controlActuatorIA2({led0: 1})">
+	<input id="led0TurnOff" type="button" value="turn off" onclick="controlActuatorIA2({led0: 0})">
+	<input id="led1TurnOn" type="button" value="turn on" onclick="controlActuatorIA2({led1: 1})">
+	<input id="led1TurnOff" type="button" value="turn off" onclick="controlActuatorIA2({led1: 0})">
+	<input id="led2TurnOn" type="button" value="turn on" onclick="controlActuatorIA2({led2: 1})">
+	<input id="led2TurnOff" type="button" value="turn off" onclick="controlActuatorIA2({led2: 0})">
 </body>
 </html>
