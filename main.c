@@ -10,12 +10,12 @@
 #define TX_INTERVAL (5000LU * US_PER_MS)
 
 #define MSG_TEMPLATE "{\
-		\"deviceId\":\"%s\",\
-		\"temperature\":%d,\
-		\"light\":%d,\
-		\"led\":%d,\
-		\"buzzer\":%d\
-		}"
+\"deviceId\":\"%s\",\
+\"temperature\":%d,\
+\"light\":%d,\
+\"led\":%d,\
+\"buzzer\":%d\
+}"
 
 #define BUFMSG_MAXLEN 200
 
