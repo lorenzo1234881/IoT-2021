@@ -1,4 +1,7 @@
 1. follow https://www.iot-lab.info/docs/tools/consumption-monitoring/
-2. follow https://www.iot-lab.info/learn/tutorials/riot/riot-mqtt-sn-a8-m3/ and https://www.iot-lab.info/learn/tutorials/riot/riot-public-ipv6-m3/:
-	Using a A8-M3 node as gnrc_border_router, propagete the ipv6 preifx from ssh host, run MQTT-S/MQTT broker on A8 node
+2. copy the necessary certifactes and keys to /etc/mosquitto/certs on one A8 node
+3. run MQTT-S/MQTT broker on the same A8 node follow https://www.iot-lab.info/learn/tutorials/riot/riot-mqtt-sn-a8-m3/
+4. Using a M3 node as gnrc_border_router, propagete the ipv6 prefix from ssh host https://www.iot-lab.info/learn/tutorials/riot/riot-public-ipv6-m3/
+5. To test wether the IPv6 prefix has been propagated flash the gnrc_networking program to one of the M3 node
+6. Flash the firmware to multiple M3 nodes
 

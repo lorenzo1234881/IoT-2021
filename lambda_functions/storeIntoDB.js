@@ -17,8 +17,9 @@ const thresholds = [
                 return false;
         },
         "msgToPublish": {
-            "led": 1,
-            "buzzer": 0,
+            "led0": 1,
+            "led1": 0,
+            "led2": 0
         }
     },
     {
@@ -32,8 +33,9 @@ const thresholds = [
                 return false;
         },
         "msgToPublish": {
-            "led": 1,
-            "buzzer": 1,
+            "led0": 0,
+            "led1": 1,
+            "led2": 0
         }
     },
 ]
@@ -47,8 +49,9 @@ exports.handler = function(event, context) {
         "timestamp": event.timestamp,
         "temperature": event.temperature,
         "light": event.light,
-        "led": event.led,
-        "buzzer": event.buzzer,
+        "led0": event.led0,
+        "led1": event.led1,
+        "led2": event.led2
         }
     };
     
@@ -64,8 +67,9 @@ exports.handler = function(event, context) {
     });
     
     var msgToPublish = {
-        "led": 0,
-        "buzzer": 0,
+        "led0": 0,
+        "led1": 0,
+        "led2":0
     };
     
     for(let threshold of thresholds)
