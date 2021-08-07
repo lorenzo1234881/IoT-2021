@@ -45,7 +45,7 @@ SERVER_PORT = 1885
 MQTT_PUB_TOPIC = local_to_aws_2
 MQTT_SUB_TOPIC = aws_to_local_2
 
-DEVICE_ID = 1
+DEVICE_ID ?= 1
 
 # Debug flags
 CTL_ACTUATORS_DEBUG = 1

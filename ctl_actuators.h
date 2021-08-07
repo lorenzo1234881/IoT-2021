@@ -7,7 +7,7 @@ typedef union {
         unsigned led1 : 1;
         unsigned led2 : 1;
     };
-    int all;    
+    unsigned all;    
 } led_state;
 
 void init_actuators(void);

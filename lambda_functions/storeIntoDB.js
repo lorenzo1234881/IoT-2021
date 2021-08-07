@@ -17,6 +17,7 @@ const thresholds = [
                 return false;
         },
         "msgToPublish": {
+            "deviceId": 0,
             "led0": 1,
             "led1": 0,
             "led2": 0
@@ -33,6 +34,7 @@ const thresholds = [
                 return false;
         },
         "msgToPublish": {
+            "deviceId": 0,
             "led0": 0,
             "led1": 1,
             "led2": 0
@@ -67,6 +69,7 @@ exports.handler = function(event, context) {
     });
     
     var msgToPublish = {
+        "deviceId": 0,
         "led0": 0,
         "led1": 0,
         "led2":0
@@ -79,6 +82,8 @@ exports.handler = function(event, context) {
         else
             break;
     }
+    
+    msgToPublish.deviceId = event.deviceId;
     
     var paramsiot = {
         topic: "aws_to_local_2",

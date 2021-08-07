@@ -1,7 +1,7 @@
 #include "ctl_actuators.h"
 #include "jsmn/jsmn.h"
 
-#define MAX_TOKENS 5
+#define MAX_TOKENS 8
 
 led_state curr_led_state;
 
@@ -46,17 +46,19 @@ void update_ctl_states(const emcute_topic_t *topic, void *data, size_t len)
     int r;
     int i;
 
-    new_led_state.all = -1;
+    new_led_state.all = 0;
 
     jsmn_init(&p);
     r = jsmn_parse(&p, in, len, t, MAX_TOKENS);
     if (r < 0) {
         printf("Failed to parse JSON: %d\n", r);
+        return;
     }
 
     /* Assume the top-level element is an object */
     if (r < 1 || t[0].type != JSMN_OBJECT) {
         printf("Object expected\n");
+        return;
     }
 
     for( i = 1; i < r; i++) 
@@ -67,15 +69,15 @@ void update_ctl_states(const emcute_topic_t *topic, void *data, size_t len)
             	return;
 			i++;
         }
-        if (jsoneq(in, &t[i], "led0") == 0) {            
+        else if (jsoneq(in, &t[i], "led0") == 0) {            
             new_led_state.led0 = atoi(in + t[i+1].start);
             i++;
         }
-        if (jsoneq(in, &t[i], "led1") == 0) {            
+        else if (jsoneq(in, &t[i], "led1") == 0) {            
             new_led_state.led1 = atoi(in + t[i+1].start);
             i++;
         }
-        if (jsoneq(in, &t[i], "led2") == 0) {            
+        else if (jsoneq(in, &t[i], "led2") == 0) {            
             new_led_state.led2 = atoi(in + t[i+1].start);
             i++;
         }
@@ -86,7 +88,7 @@ void update_ctl_states(const emcute_topic_t *topic, void *data, size_t len)
         }
     }
 
-    if(new_led_state.all != -1 && new_led_state.all != curr_led_state.all)
+    if(new_led_state.all != curr_led_state.all)
     {
         if(new_led_state.led0) {LED0_ON;}
         else {LED0_OFF;}
@@ -98,7 +100,7 @@ void update_ctl_states(const emcute_topic_t *topic, void *data, size_t len)
         curr_led_state.all = new_led_state.all;
 
         #if CTL_ACTUATORS_DEBUG
-        printf("change state led: %d\n", curr_led_state.all);
+        printf("change state led: %ud\n", curr_led_state.all);
         #endif
     }
 }
