@@ -98,42 +98,43 @@ exports.handler = async (event, context) => {
         var last_value = {
           temperature: undefined,
           light: undefined,
-          light: undefined,
-          buzzer: undefined
+          led0: undefined,
+          led1: undefined,
+          led2: undefined
         }
         
         if(data.ScannedCount >= 1) {
             last_value = data.Items[data.ScannedCount-1];
-            // if(Date.now() - last_value.timestamp >  hour)
-            //   last_value = undefined;
+             if(Date.now() - last_value.timestamp >  hour)
+               last_value = undefined;
         }
           
         body = JSON.stringify(last_value);
         
         break;
-            case "GET /last-values/{deviceId}":
-        var data = await dynamo.scan({ TableName: tablename, limit: 1}).promise();
-        
-        var last_value = {
-          temperature: undefined,
-          light: undefined,
-          light: undefined,
-          buzzer: undefined
-        }
-
-        currentTime = Date.now();
-        
-        for (var item of data.Items)
-        {        
-          if(item.deviceId == event.pathParameters.deviceId && currentTime-item.timestamp ) {
-            last_value = item;
-            break;
+        case "GET /last-values/{deviceId}":
+          var data = await dynamo.scan({ TableName: tablename, limit: 1}).promise();
+          
+          var last_value = {
+            temperature: undefined,
+            light: undefined,
+            led0: undefined,
+            led1: undefined,
+            led2: undefined
           }
-        }
+  
+          currentTime = Date.now();
           
-        body = JSON.stringify(last_value);
-        
-        break;
+          for (var item of data.Items)
+          {        
+            if(item.deviceId == event.pathParameters.deviceId && currentTime-item.timestamp < hour) {
+              last_value = item;
+            }
+          }
+          
+          body = JSON.stringify(last_value);
+          
+      break;
       case "GET /aggregate-values":
         
         var data = await dynamo.scan({ TableName: tablename}).promise();
@@ -144,8 +145,8 @@ exports.handler = async (event, context) => {
         
         for (var item of data.Items)
         {
-          // if(currentTime - item.timestamp >  hour)
-          //   continue;
+           if(currentTime - item.timestamp >  hour)
+             continue;
           
           aggValTemperature.updateMax(item.temperature);
           aggValTemperature.updateMin(item.temperature);
@@ -176,8 +177,8 @@ exports.handler = async (event, context) => {
         
         for (var item of data.Items)
         {
-          // if(currentTime - item.timestamp >  hour)
-          //   continue;
+           if(currentTime - item.timestamp >  hour)
+             continue;
           if(item.deviceId != event.pathParameters.deviceId)
             continue;
           
@@ -206,8 +207,8 @@ exports.handler = async (event, context) => {
         
         for (var item of data.Items)
         {
-          // if(currentTime - item.timestamp >  hour)
-          //  continue;
+           if(currentTime - item.timestamp >  hour)
+            continue;
           
           AggValPerDeviceList.updateAggVals(item.deviceId, item.temperature, item.light);
         }

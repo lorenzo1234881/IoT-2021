@@ -1,7 +1,7 @@
 #include "ctl_actuators.h"
 #include "jsmn/jsmn.h"
 
-#define MAX_TOKENS 8
+#define MAX_TOKENS 20
 
 led_state curr_led_state;
 
