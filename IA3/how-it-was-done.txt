@@ -1,0 +1,2 @@
+0. follow https://www.thethingsindustries.com/docs/integrations/cloud-integrations/aws-iot/default/ to connect TheThingsNetwork with AWS IoT Core
+
