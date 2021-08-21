@@ -1,4 +1,4 @@
-# IoT-IA1-2021 - Plant Monitor System
+# IoT-IA1-2021
 ## Introduction
 The goal of this project is to monitor a plants conditions, to see if necessary needs, like light and temperature, are met. To accomplish this goal two types of sensor for each plant are used: a photoresistor and a TMP36 temperature sensor to be able to read the luminosity and the temperature room. In case of allarming values a led or a buzzer will be turned on to notify the owner, that will also have the possibility to view the data sent to the backend and to test the actuators via a website. The led and the buzzer are one for each plant.\
 Depending on the values there are three states:
