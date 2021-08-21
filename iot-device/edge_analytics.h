@@ -7,4 +7,4 @@ typedef struct {
 } aggregate_data;
 
 int aggregate_data_init(aggregate_data* ad);
-int aggregate_data_update(aggregate_data* ad, int elem)
+int aggregate_data_update(aggregate_data* ad, int elem);

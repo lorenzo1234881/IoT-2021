@@ -35,7 +35,9 @@ ifneq (,$(filter iotlab%,$(MAKECMDGOALS)))
   include $(RIOTBASE)/dist/testbed-support/Makefile.iotlab
 endif
 
-DEVICE_ID = 1
-CFLAGS += -DDEVICE_ID='"$(DEVICE_ID)"'
+CFLAGS += -DCONFIG_LORAMAC_APP_KEY_DEFAULT=\"$(APPKEY)\"
+CFLAGS += -DCONFIG_LORAMAC_APP_EUI_DEFAULT=\"$(APPEUI)\"
+CFLAGS += -DCONFIG_LORAMAC_DEV_EUI_DEFAULT=\"$(DEVEUI)\"
 
 include $(RIOTBASE)/Makefile.include
+
