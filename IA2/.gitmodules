@@ -1,0 +1,3 @@
+[submodule "jsmn"]
+	path = iot-device/jsmn
+	url = https://github.com/zserge/jsmn
