@@ -10,4 +10,4 @@
 
 ## IoT Architecture
 The B-L072Z-LRWAN1 nodes perform the edge analytics and send the aggregate data to The Things Network via LoRa. To connect TTN and AWS an A8 node running mosquitto is used. The node subscribe to a topic, where the data sent to the TTN is published. After receiveing data the node publish the data on a different topic that AWS IoT subscribes to and sends to Dynamo DB.
-<img src="https://github.com/lorenzo1234881/IoT-IA3-2021/blob/main/images/architecture.png" width=800>
+<img src="https://github.com/lorenzo1234881/IoT-IA3-2021/blob/master/images/architecture.png" width=800>
