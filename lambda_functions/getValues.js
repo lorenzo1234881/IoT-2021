@@ -47,12 +47,22 @@ exports.handler = async (event, context) => {
       case "GET /last-values":
         var data = await dynamo.scan({ TableName: "IoT_IA1", limit: 1}).promise();
         
-        var last_value = {}
+        var last_value = {
+            temperature: undefined,
+            light: undefined,
+            buzzer: undefined,
+            led: undefined
+          };
         
         if(data.ScannedCount >= 1) {
             last_value = data.Items[data.ScannedCount-1];
             if(Date.now() - last_value.timestamp >  hour)
-              last_value = undefined;
+              last_value = {
+                temperature: undefined,
+                light: undefined,
+                buzzer: undefined,
+                led: undefined
+              };
         }
           
         body = JSON.stringify(last_value);
@@ -65,6 +75,8 @@ exports.handler = async (event, context) => {
         var aggValLight = Object.create(AggregateVal);
 
         const currentTime = Date.now();
+        
+        console.log(aggValLight.max)
         
         for (var item of data.Items)
         {
@@ -81,6 +93,8 @@ exports.handler = async (event, context) => {
         }
         aggValTemperature.computeAvg();
         aggValLight.computeAvg();
+        
+        console.log(aggValLight)
         
         var jsonMsg = {
             light:aggValLight,
