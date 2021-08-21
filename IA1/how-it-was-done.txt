@@ -1,0 +1,32 @@
+0. intsall rsmb, mosquitto, awscli
+1. get aws account credentials and put them in ~/.aws/credentials
+2. follow tutorial https://aws.amazon.com/blogs/iot/how-to-bridge-mosquitto-mqtt-broker-to-aws-iot/
+3. run rsmb with following config
+'''	
+	# add some debug output
+	trace_output protocol
+
+	# Normal MQTT listener
+	listener 1886 INADDR_ANY
+	ipv6 true
+
+	# MQTT-SN listener
+	listener 1885 INADDR_ANY mqtts
+		ipv6 true
+
+	# MQTT-S outgoing local bridge
+	connection local_bridge_to_mosquitto
+		address 127.0.0.1:1883
+		topic local_to_aws_1 out
+		topic aws_to_local_1 in
+'''
+5. follow https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteHosting.html
+6. create aws rule:
+"SELECT *, cast(timestamp() as String) as timestamp FROM 'local_to_aws_1'"
+"Send a message to A Lambda function"
+7. remove all fe80:: ip routes or mosquitto will send udp packet to the wrong interface (eth0 instead of tap0)
+8. https://aws.amazon.com/blogs/compute/implementing-a-serverless-aws-iot-backend-with-aws-lambda-and-amazon-dynamodb/
+9. https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-dynamo-db.html
+10. configure CORS:
+	- modify lambda such that it will return CORS headers
+	- modify gateway API CORS settings
